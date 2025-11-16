@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIT Papers Retrieval System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .vit-logo {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+        }
+
+        .search-card {
+            background: white;
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.25);
+            margin-bottom: 30px;
+        }
+
+        .source-selector-section {
+            margin-bottom: 30px;
+        }
+
+        .search-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        label {
+            font-weight: 700;
+            color: #1e3a8a;
+            font-size: 1.05rem;
+        }
+
+        input, select {
+            padding: 14px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 1.05rem;
+            transition: all 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        select {
+            cursor: pointer;
+            background: white;
+        }
+
+        .search-btn {
+            padding: 16px;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 6px 20px rgba(30, 58, 138, 0.3);
+        }
+
+        .search-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(30, 58, 138, 0.4);
+        }
+
+        .search-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .results-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+        }
+
+        .paper-card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .paper-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            border-color: #3b82f6;
+        }
+
+        .paper-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .paper-info {
+            font-size: 0.95rem;
+            color: #64748b;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .paper-source {
+            display: inline-block;
+            padding: 6px 14px;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .download-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: #10b981;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: all 0.3s;
+            margin-top: 15px;
+        }
+
+        .download-btn:hover {
+            background: #059669;
+            transform: scale(1.03);
+        }
+
+        .loading {
+            text-align: center;
+            color: white;
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin: 30px 0;
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 18px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border-left: 4px solid #dc2626;
+        }
+
+        .no-results {
+            text-align: center;
+            color: white;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin: 50px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="vit-logo">🎓</div>
+            <h1>VIT Papers Retrieval System</h1>
+            <p>Search and Download Previous Year Question Papers</p>
+        </header>
+
+        <div class="search-card">
+            <!-- SOURCE SELECTION DROPDOWN -->
+            <div class="source-selector-section">
+                <div class="form-group">
+                    <label for="sourceSelect">📂 Select Paper Source</label>
+                    <select id="sourceSelect" onchange="selectSource(this.value)">
+                        <option value="github">📦 GitHub Papers</option>
+                        <option value="codechef">🏆 CodeChef Papers</option>
+                        <option value="papervault" disabled>📚 VIT PaperVault (Coming Soon)</option>
+                    </select>
+                </div>
+            </div>
+
+            <hr style="border: none; border-top: 2px solid #e5e7eb; margin: 25px 0;">
+
+            <!-- SEARCH FORM -->
+            <form class="search-form" onsubmit="searchPapers(event)">
+                <div class="form-group">
+                    <label for="courseCode">📖 Course Code (Optional)</label>
+                    <input type="text" id="courseCode" placeholder="e.g., CSE1001, MAT2001">
+                </div>
+
+                <div class="form-group">
+                    <label for="courseName">📝 Course/Subject Name *</label>
+                    <input type="text" id="courseName" placeholder="e.g., Data Structures, Cloud Computing" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="paperType">📋 Paper Type</label>
+                    <select id="paperType">
+                        <option value="all">All Types</option>
+                        <option value="CAT1">CAT 1</option>
+                        <option value="CAT2">CAT 2</option>
+                        <option value="FAT">FAT (Final Assessment Test)</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="search-btn">🔍 Search Papers</button>
+            </form>
+        </div>
+
+        <div id="loading" class="loading" style="display: none;">
+            ⏳ Searching for papers...
+        </div>
+
+        <div id="error" class="error" style="display: none;"></div>
+
+        <div id="results" class="results-container"></div>
+    </div>
+
+    <script>
+        let selectedSource = 'github';
+
+        function selectSource(source) {
+            selectedSource = source;
+            console.log('Selected source:', source);
+        }
+
+        async function searchPapers(event) {
+            event.preventDefault();
+
+            const courseCode = document.getElementById('courseCode').value.trim();
+            const courseName = document.getElementById('courseName').value.trim();
+            const paperType = document.getElementById('paperType').value;
+
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+            const results = document.getElementById('results');
+
+            loading.style.display = 'block';
+            error.style.display = 'none';
+            results.innerHTML = '';
+
+            try {
+                const url = `http://localhost:5000/api/${selectedSource}/search?courseCode=${encodeURIComponent(courseCode)}&courseName=${encodeURIComponent(courseName)}&paperType=${paperType}`;
+                
+                console.log('Searching with URL:', url);
+                
+                const response = await fetch(url);
+                const data = await response.json();
+
+                loading.style.display = 'none';
+
+                if (!data.success) {
+                    error.textContent = '❌ ' + (data.error || 'Failed to fetch papers');
+                    error.style.display = 'block';
+                    return;
+                }
+
+                if (data.papers.length === 0) {
+                    results.innerHTML = '<div class="no-results">📭 No papers found. Try different search terms.</div>';
+                    return;
+                }
+
+                results.innerHTML = data.papers.map(paper => `
+                    <div class="paper-card">
+                        <span class="paper-source">${paper.source || selectedSource.toUpperCase()}</span>
+                        <div class="paper-title">${paper.title || paper.filename}</div>
+                        ${paper.courseCode ? `<div class="paper-info">📖 Course: ${paper.courseCode}</div>` : ''}
+                        ${paper.examType ? `<div class="paper-info">📝 Type: ${paper.examType}</div>` : ''}
+                        ${paper.year ? `<div class="paper-info">📅 Year: ${paper.year}</div>` : ''}
+                        ${paper.subject ? `<div class="paper-info">📚 Subject: ${paper.subject}</div>` : ''}
+                        <a href="${paper.downloadUrl || paper.file_url}" class="download-btn" target="_blank">⬇️ Download Paper</a>
+                    </div>
+                `).join('');
+
+            } catch (err) {
+                loading.style.display = 'none';
+                error.textContent = '❌ Error connecting to server. Make sure the backend is running on port 5000.';
+                error.style.display = 'block';
+                console.error('Search error:', err);
+            }
+        }
+    </script>
+</body>
+</html>
