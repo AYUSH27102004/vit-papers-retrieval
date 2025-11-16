@@ -303,7 +303,7 @@
             results.innerHTML = '';
 
             try {
-                const url = `http://localhost:5000/api/${selectedSource}/search?courseCode=${encodeURIComponent(courseCode)}&courseName=${encodeURIComponent(courseName)}&paperType=${paperType}`;
+const base_url = 'https://vit-papers-retrieval.vercel.app/api/${selectedSource}/search?coursecode=${encodeURIComponent(coursecode)}&coursename=${encodeURIComponent(courseName)}&papertype=${paperType}';
                 
                 console.log('Searching with URL:', url);
                 
