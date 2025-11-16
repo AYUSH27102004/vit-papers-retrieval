@@ -142,3 +142,4 @@ app.listen(PORT, () => {
     console.log(`🔍 CodeChef search: http://localhost:${PORT}/api/codechef/search`);
     console.log(`🔍 Combined search: http://localhost:${PORT}/api/search`);
 });
+module.exports = app;
